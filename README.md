@@ -1,2 +1,7 @@
-# ProgrammingTechnologies_24
-Solutions for exercises proposed in the Programming Technologies classes
+# Programming Technology Lab
+
+## Team
+
+| Name Surname (initials) | GUID                                     |
+| ----------------------- | ---------------------------------------- |
+| Izabela Andrzejczyk     | `{0e1416fd-bc6d-4624-a052-95ce2d7dca47}` |
