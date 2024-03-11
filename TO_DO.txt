@@ -1,0 +1,7 @@
+TO DO
+create a GitHub repository together with your teammate. One repository per development team is expected
+copy the contents of the file GitHubREADMETempllate.md to the file README.md of the repository
+complete the file by entering your personal identification (full name or initials) data and generate GUIDs
+the repository should contain a sample program that can be compiled
+unit tests - that can be executed and passed - should be included in the program
+copy the repository URL (green button) and your GUID into the text of the Feedback comment of the task
