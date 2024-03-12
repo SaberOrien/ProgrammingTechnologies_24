@@ -1,0 +1,11 @@
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\bin\Debug\net8.0\GreeterApplication.deps.json
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\bin\Debug\net8.0\GreeterApplication.dll
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\bin\Debug\net8.0\GreeterApplication.pdb
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\GreeterApplication.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\GreeterApplication.AssemblyInfoInputs.cache
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\GreeterApplication.AssemblyInfo.cs
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\GreeterApplication.csproj.CoreCompileInputs.cache
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\GreeterApplication.dll
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\refint\GreeterApplication.dll
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\GreeterApplication.pdb
+C:\Users\shino\Desktop\PT\Task-1\GreeterApplication\GreeterApplication\obj\Debug\net8.0\ref\GreeterApplication.dll
