@@ -1,4 +1,4 @@
-# Programming Technology Lab
+# Programming Technologies Lab
 
 ## Team
 
