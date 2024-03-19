@@ -30,6 +30,17 @@ namespace TaskManagerLibraryTests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "An ArgumentException should be thrown for null or whitespace descriptions.")]
+        public void AddTask_WithInvalidDescription_ThrowsArgumentException()
+        {
+            var manager = new TaskManager();
+            string invalidDescription = "";
+
+            manager.AddTask(invalidDescription);
+        }
+
+
+        [TestMethod]
         public void RemoveTask_RemovesTaskToList()
         {
             var manager = new TaskManager();
