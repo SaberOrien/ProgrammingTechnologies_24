@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TaskManagerLibrary\TaskManagerLibrary.csproj" />
+    <ProjectReference Include="..\LibraryLogic\LibraryLogic.csproj" />
   </ItemGroup>
 
   <ItemGroup>
