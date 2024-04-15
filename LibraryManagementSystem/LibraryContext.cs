@@ -11,13 +11,21 @@ namespace LibraryManagementSystem.Data
 {
     public class LibraryContext : ILibraryContext
     {
-        public List<Reader> Readers { get; private set; } = new List<Reader>();
-        public List<Librarian> Librarians { get; private set; } = new List<Librarian>();
-        public Dictionary<int, Item> Catalog { get; private set; } = new Dictionary<int, Item>();
-        public List<Event> Events { get; private set; } = new List<Event>();
+        public List<Reader> Readers { get; private set; }
+        public List<Librarian> Librarians { get; private set; }
+        public Dictionary<int, Item> Catalog { get; private set; }
+        public List<Event> Events { get; private set; }
         public IEnumerable<Item> AvailableItems => Catalog.Values.Where(i => i.copiesInStock > i.copiesBorrowed);
         public IEnumerable<Item> BorrowedItems => Catalog.Values.Where(i => i.copiesBorrowed > 0);
         public IEnumerable<Reader> ActiveBorrowers => Readers.Where(r => r.BooksBorrowed.Any(b => !b.DateReturned.HasValue));
+
+        public LibraryContext(List<Reader> readers, List<Librarian> librarians, Dictionary<int, Item> catalog, List<Event> events)
+        {
+            Readers = readers ?? throw new ArgumentNullException(nameof(readers));
+            Librarians = librarians ?? throw new ArgumentNullException(nameof(librarians));
+            Catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
+            Events = events ?? throw new ArgumentNullException(nameof(events));
+        }
 
 
         public void AddReader(Reader reader)

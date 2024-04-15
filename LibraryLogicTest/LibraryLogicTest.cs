@@ -14,17 +14,14 @@ public class LibraryLogicTest
     [TestInitialize]
     public void Setup()
     {
-        _context = new LibraryContext();
-        _manager = new LibraryManager(_context);
         _dataGenerator = new ScenarioDataGenerator();
 
         var (readers, items, events) = _dataGenerator.GenerateOverdueItemsScenario();
-        foreach (var reader in readers)
-            _context.Readers.Add(reader);
-        foreach (var item in items)
-            _context.Catalog.Add(item.Id, item);
-        foreach (var eventItem in events)
-            _context.Events.Add(eventItem);
+        var catalog = items.ToDictionary(item => item.Id);
+        var eventList = events.ToList();
+
+        _context = new LibraryContext(readers, new List<Librarian>(), catalog, eventList); 
+        _manager = new LibraryManager(_context);
     }
 
     [TestMethod]
@@ -118,4 +115,13 @@ public class LibraryLogicTest
         var unreturnedBooks = _context.Readers.First(r => r.Id == 21).BooksBorrowed.Where(b => !b.DateReturned.HasValue).ToList();
         Assert.AreEqual(unreturnedBooksCurCount, unreturnedBooks.Count, "Should retrieve unreturned books for a user");
     }
+
+    [TestMethod]
+    public void LibraryContext_ShouldCorrectlyReportAvailableAndBorrowedItems()
+    {
+        _manager.CheckOutItem(102, 21);
+        Assert.AreEqual(1, _context.BorrowedItems.Count(), "There should be one borrowed item.");
+        Assert.AreEqual(1, _context.AvailableItems.Count(), "There should be one available item, considering initial stock.");
+    }
+
 }

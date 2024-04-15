@@ -10,25 +10,24 @@ public class LibraryContextTests
     private RandomDataGenerator _dataGenerator;
     private List<Item> _generatedItems;
     private List<Reader> _generatedReaders;
+    private List<Librarian> _generatedLibrarians;
+    private List<Event> _generatedEvents;
+    private Dictionary<int, Item> _catalog;
 
     [TestInitialize]
     public void Setup()
     {
-        _libraryContext = new LibraryContext();
         _dataGenerator = new RandomDataGenerator();
 
+        // Generate random data
         _generatedItems = _dataGenerator.GenerateRandomItems(10);
         _generatedReaders = _dataGenerator.GenerateRandomReaders(5);
+        _generatedLibrarians = _dataGenerator.GenerateRandomLibrarians(3);
+        _generatedEvents = _dataGenerator.GenerateRandomEvents(10, _generatedItems.Select(item => item.Id).ToList());
+        _catalog = _generatedItems.ToDictionary(item => item.Id);
 
-        foreach (var item in _generatedItems)
-        {
-            _libraryContext.AddItem(item);
-        }
-
-        foreach (var reader in _generatedReaders)
-        {
-            _libraryContext.AddReader(reader);
-        }
+        // Create LibraryContext with injected dependencies
+        _libraryContext = new LibraryContext(_generatedReaders, _generatedLibrarians, _catalog, _generatedEvents);
     }
 
     [TestMethod]
@@ -153,16 +152,5 @@ public class LibraryContextTests
         _libraryContext.UpdateItem(item);
 
         Assert.AreEqual(updatedTitle, _libraryContext.Catalog[item.Id].Title);
-    }
-
-    [TestMethod]
-    public void LibraryContext_ShouldCorrectlyReportAvailableAndBorrowedItems()
-    {
-        var context = new LibraryContext();
-        context.AddItem(new Item { Id = 31, Title = "Book One", Author = "Aut1", Publisher = "PubA", PublishingYear = 2007, copiesInStock = 3, copiesBorrowed = 2 });
-        context.AddItem(new Item { Id = 32, Title = "Book Two", Author = "Aut1", Publisher = "PubA", PublishingYear = 2008, copiesInStock = 2, copiesBorrowed = 0 });
-
-        Assert.AreEqual(1, context.BorrowedItems.Count(), "There should be one borrowed item.");
-        Assert.AreEqual(2, context.AvailableItems.Count(), "There should be two available items including the one not borrowed at all.");
     }
 }

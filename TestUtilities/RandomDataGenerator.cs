@@ -46,5 +46,38 @@ namespace LibraryManagementSystem.TestUtilities
             }
             return readers;
         }
+
+        public List<Librarian> GenerateRandomLibrarians(int numberOfLibrarians)
+        {
+            var librarians = new List<Librarian>();
+            for (int i = 0; i < numberOfLibrarians; i++)
+            {
+                var librarian = new Librarian
+                {
+                    Id = i,
+                    Name = $"LibrarianName{i}",
+                    Surname = $"LibrarianSurname{i}"
+                };
+                librarians.Add(librarian);
+            }
+            return librarians;
+        }
+
+        public List<Event> GenerateRandomEvents(int numberOfEvents, List<int> itemIds)
+        {
+            var events = new List<Event>();
+            for (int i = 0; i < numberOfEvents; i++)
+            {
+                var newEvent = new Event
+                {
+                    UserId = _random.Next(1, 100),
+                    ItemId = itemIds[_random.Next(itemIds.Count)],
+                    Timestamp = DateTime.Now.AddDays(-_random.Next(0, 365)),
+                    Type = (EventType) _random.Next(0, 2)
+                };
+                events.Add(newEvent);
+            }
+            return events;
+        }
     }
 }
