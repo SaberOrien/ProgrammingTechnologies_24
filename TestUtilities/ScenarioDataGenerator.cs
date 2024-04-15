@@ -32,7 +32,7 @@ namespace LibraryManagementSystem.TestUtilities
                     var borrowRecord = new BorrowRecord
                     {
                         BookId = item.Id,
-                        DateBorrowed = DateTime.Now.AddDays(-45), // Borrowed 45 days ago, making it overdue
+                        DateBorrowed = DateTime.Now.AddDays(-45),
                     };
                     reader.BooksBorrowed.Add(borrowRecord);
 

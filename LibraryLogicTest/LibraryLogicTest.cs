@@ -14,7 +14,7 @@ public class LibraryLogicTest
     [TestInitialize]
     public void Setup()
     {
-        _context = new LibraryContext(); // Assuming LibraryContext implements ILibraryContext
+        _context = new LibraryContext();
         _manager = new LibraryManager(_context);
         _dataGenerator = new ScenarioDataGenerator();
 
@@ -45,8 +45,8 @@ public class LibraryLogicTest
     [TestMethod]
     public void ReturnItem_ShouldReturnBookOnTime_WithoutPenalty()
     {
-        _manager.CheckOutItem(102, 21);  // Checkout first to return later
-        System.Threading.Thread.Sleep(1000); // Simulate some time delay
+        _manager.CheckOutItem(102, 21);
+        System.Threading.Thread.Sleep(1000);
         bool result = _manager.ReturnItem(102, 21);
         Assert.IsTrue(result, "Book should be returned successfully");
         var borrowRecord = _context.Readers.First(r => r.Id == 21).BooksBorrowed.First();
@@ -61,7 +61,7 @@ public class LibraryLogicTest
         var borrowRecord = new BorrowRecord
         {
             BookId = item.Id,
-            DateBorrowed = DateTime.Now.AddDays(-40) // Borrowed 40 days ago
+            DateBorrowed = DateTime.Now.AddDays(-40)
         };
         reader.BooksBorrowed.Add(borrowRecord);
 
