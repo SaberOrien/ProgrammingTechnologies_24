@@ -1,0 +1,95 @@
+﻿<UserControl x:Class="MVVM.View.ItemView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MVVM.View"
+      xmlns:view="clr-namespace:MVVM.View"
+      xmlns:viewmodels="clr-namespace:MVVM.ViewModel"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <ObjectDataProvider ObjectType="viewmodels:ItemViewModel">
+            <ObjectDataProvider.ConstructorParameters>
+                <x:Null/>
+            </ObjectDataProvider.ConstructorParameters>
+        </ObjectDataProvider>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10">
+            <Button Content="Events" Width="100" Margin="5" Command="{Binding SwitchToEvent}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"/>
+            <Button Content="States" Width="100" Margin="5" Command="{Binding SwitchToState}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"/>
+            <Button Content="Users" Width="100" Margin="5" Command="{Binding SwitchToUser}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"/>
+        </StackPanel>
+
+        <!-- Items ListView -->
+        <ListView ItemsSource="{Binding Items, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Details}" Grid.Row="1" Grid.Column="0" Margin="10">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Id}" />
+                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" />
+                    <GridViewColumn Header="Author" DisplayMemberBinding="{Binding Author}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- Item Details View -->
+        <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="10" Visibility="{Binding ShowDetails}">
+            <view:ItemDetailsView DataContext="{Binding Details}"/>
+            <Button Content="Delete" Background="Red" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="100" Height="30" Command="{Binding RemoveItem}"/>
+        </Grid>
+
+        <!-- Add Item Form -->
+        <Grid Grid.Row="2" Grid.Column="0" Margin="10">
+            <StackPanel>
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Title" FontSize="9" Grid.Column="0"/>
+                    <TextBox Width="200" Text="{Binding Title, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                </Grid>
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="PublicationYear" FontSize="9" Grid.Column="0"/>
+                    <TextBox Width="200" Text="{Binding PublicationYear, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                </Grid>
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Author" FontSize="9" Grid.Column="0"/>
+                    <TextBox Width="200" Text="{Binding Author, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                </Grid>
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="ItemType" FontSize="9" Grid.Column="0"/>
+                    <ComboBox Width="200" SelectedItem="{Binding ItemType, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1">
+                        <ComboBoxItem Content="Book" />
+                        <ComboBoxItem Content="Magazine" />
+                    </ComboBox>
+                </Grid>
+                <Button Content="Create Item" Width="100" Margin="5" Command="{Binding CreateItem}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
