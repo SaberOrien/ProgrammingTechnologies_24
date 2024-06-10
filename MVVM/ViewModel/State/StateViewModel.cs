@@ -15,7 +15,7 @@ namespace MVVM.ViewModel
         public ICommand CreateState {  get; set; }
         public ICommand RemoveState { get; set; }
 
-        private readonly StateFunctions _stateFunctions;
+        private readonly IStateFunctions _stateFunctions;
         private ObservableCollection<StateDetailsViewModel> _stateDetails;
         public ObservableCollection<StateDetailsViewModel> StateDetails
         {
@@ -95,7 +95,7 @@ namespace MVVM.ViewModel
             }
         }
     
-        public StateViewModel(StateFunctions? stateFunctions = null)
+        public StateViewModel(IStateFunctions? stateFunctions = null)
         {
             this.SwitchToUser = new SwitchCurrentViewCommand("UserView");
             this.SwitchToItem = new SwitchCurrentViewCommand("ItemView");

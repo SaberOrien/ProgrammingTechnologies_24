@@ -16,7 +16,7 @@ namespace MVVM.ViewModel
         public ICommand RemoveUser { get; set; }
 
 
-        private readonly UserFunctions userFunctions;
+        private readonly IUserFunctions userFunctions;
         private ObservableCollection<UserDetailsViewModel> _privUsers;
 
         public ObservableCollection<UserDetailsViewModel> Users
@@ -29,7 +29,7 @@ namespace MVVM.ViewModel
             }
         }
 
-        public UserViewModel(UserFunctions? userFunctions = null)
+        public UserViewModel(IUserFunctions? userFunctions = null)
         {
             this.SwitchToItem = new SwitchCurrentViewCommand("ItemView");
             this.SwitchToState = new SwitchCurrentViewCommand("StateView");
@@ -39,7 +39,7 @@ namespace MVVM.ViewModel
 
             this.Users = new ObservableCollection<UserDetailsViewModel>();
 
-            this.userFunctions = userFunctions ?? new UserFunctions(null);//IUserFunctions.CreateUserFunctions();
+            this.userFunctions = userFunctions ?? new UserFunctions(null);
             this.IsSelected = false;
 
             Task.Run(this.LoadUsers);

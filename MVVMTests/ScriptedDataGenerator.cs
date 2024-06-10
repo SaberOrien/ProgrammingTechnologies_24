@@ -1,60 +1,44 @@
 ﻿using MVVM.Model;
-using MVVM.ViewModel;
-using Moq;
-using Logic.Services_Abstract;
-using Logic.DTOs_Abstract;
+using System.Collections.Generic;
 
 namespace MVVMTests
 {
     internal class ScriptedDataGenerator : IDataGenerator
     {
-        public void GenerateUserModels(UserViewModel userViewModel)
+        public Dictionary<int, UserModel> GenerateUserModels()
         {
-            Mock<IUserService> _userServiceMock = new Mock<IUserService>();
-            _userServiceMock.Setup(service => service.GetUser(It.IsAny<int>())).ReturnsAsync((int id) => new Mock<IUserDTO>().Object);
-            UserFunctions userFunctions = new UserFunctions(_userServiceMock.Object);
-            userViewModel.Users.Add(new UserDetailsViewModel(1, "Saber", "Orien", "orien@gmail.com", "Reader", userFunctions));
-            userViewModel.Users.Add(new UserDetailsViewModel(2, "Zak", "Missing", "crystalDruid@gmail.com", "Reader", userFunctions));
-            userViewModel.Users.Add(new UserDetailsViewModel(3, "Kit", "Morris", "bestAgent@gmail.com", "Librarian", userFunctions));
-            userViewModel.Users.Add(new UserDetailsViewModel(4, "John", "Doe", "johndoe@gmail.com", "Librarian", userFunctions));
-            userViewModel.Users.Add(new UserDetailsViewModel(5, "Jane", "Smith", "janedoe@gmail.com", "Librarian", userFunctions));
+            return new Dictionary<int, UserModel>
+            {
+                { 1, new UserModel(1, "John", "Doe", "john.doe@example.com", "User") },
+                { 2, new UserModel(2, "Jane", "Doe", "jane.doe@example.com", "Admin") }
+            };
         }
 
-        public void GenerateItemModels(ItemViewModel itemViewModel)
+        public Dictionary<int, ItemModel> GenerateItemModels()
         {
-            Mock<IItemService> _itemServiceMock = new Mock<IItemService>();
-            _itemServiceMock.Setup(service => service.GetItem(It.IsAny<int>())).ReturnsAsync((int id) => new Mock<IItemDTO>().Object);
-            ItemFunctions itemFunctions = new ItemFunctions(_itemServiceMock.Object);
-
-            itemViewModel.Items.Add(new ItemDetailsViewModel(1, "The Lightning Thief", 2005, "Rick Riordan", "Book", itemFunctions));
-            itemViewModel.Items.Add(new ItemDetailsViewModel(2, "The Sea of Monsters", 2006, "Rick Riordan", "Book", itemFunctions));
-            itemViewModel.Items.Add(new ItemDetailsViewModel(3, "The Titan's Curse", 2007, "Rick Riordan", "Book", itemFunctions));
-            itemViewModel.Items.Add(new ItemDetailsViewModel(4, "National Geographic", 2023, "National Geographic Society", "Magazine", itemFunctions));
-            itemViewModel.Items.Add(new ItemDetailsViewModel(5, "Scientific American", 2023, "Scientific American", "Magazine", itemFunctions));
+            return new Dictionary<int, ItemModel>
+            {
+                { 1, new ItemModel(1, "Title1", 2020, "Author1", "Book") },
+                { 2, new ItemModel(2, "Title2", 2021, "Author2", "Journal") }
+            };
         }
-        public void GenerateStateModels(StateViewModel stateViewModel)
-        {
-            Mock<IStateService> _stateServiceMock = new Mock<IStateService>();
-            _stateServiceMock.Setup(service => service.GetState(It.IsAny<int>())).ReturnsAsync((int id) => new Mock<IStateDTO>().Object);
-            StateFunctions stateFunctions = new StateFunctions(_stateServiceMock.Object);
 
-            stateViewModel.StateDetails.Add(new StateDetailsViewModel(1, 1, 19, stateFunctions));
-            stateViewModel.StateDetails.Add(new StateDetailsViewModel(2, 2, 29, stateFunctions));
-            stateViewModel.StateDetails.Add(new StateDetailsViewModel(3, 3, 39, stateFunctions));
-            stateViewModel.StateDetails.Add(new StateDetailsViewModel(4, 4, 49, stateFunctions));
-            stateViewModel.StateDetails.Add(new StateDetailsViewModel(5, 5, 59, stateFunctions));
+        public Dictionary<int, StateModel> GenerateStateModels()
+        {
+            return new Dictionary<int, StateModel>
+            {
+                { 1, new StateModel(1, 1, 100) },
+                { 2, new StateModel(2, 2, 200) }
+            };
         }
-        public void GenerateEventModels(EventViewModel eventViewModel)
-        {
-            Mock<IEventService> _eventServiceMock = new Mock<IEventService>();
-            _eventServiceMock.Setup(service => service.GetEvent(It.IsAny<int>())).ReturnsAsync((int id) => new Mock<IEventDTO>().Object);
-            EventFunctions eventFunctions = new EventFunctions(_eventServiceMock.Object);
 
-            eventViewModel.Events.Add(new EventDetailsViewModel(1, 1, 1, DateTime.Now, "Borrow", eventFunctions));
-            eventViewModel.Events.Add(new EventDetailsViewModel(1, 1, 1, DateTime.Now, "Return", eventFunctions));
-            eventViewModel.Events.Add(new EventDetailsViewModel(1, 2, 1, DateTime.Now, "Borrow", eventFunctions));
-            eventViewModel.Events.Add(new EventDetailsViewModel(1, 2, 2, DateTime.Now, "Borrow", eventFunctions));
-            eventViewModel.Events.Add(new EventDetailsViewModel(1, 2, 2, DateTime.Now, "Return", eventFunctions));
+        public Dictionary<int, EventModel> GenerateEventModels()
+        {
+            return new Dictionary<int, EventModel>
+            {
+                { 1, new EventModel(1, 1, 1, DateTime.Now, "Borrow") },
+                { 2, new EventModel(2, 2, 2, DateTime.Now, "Return") }
+            };
         }
     }
 }

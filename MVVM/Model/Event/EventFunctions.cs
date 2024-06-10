@@ -3,7 +3,7 @@ using Logic.DTOs_Abstract;
 
 namespace MVVM.Model
 {
-    public class EventFunctions
+    public class EventFunctions : IEventFunctions
     {
         private IEventService _eventService;
         public EventFunctions(IEventService eventService)

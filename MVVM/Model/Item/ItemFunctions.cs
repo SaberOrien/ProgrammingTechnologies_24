@@ -3,7 +3,7 @@ using Logic.Services_Abstract;
 
 namespace MVVM.Model
 {
-    public class ItemFunctions
+    public class ItemFunctions : IItemFunctions
     {
         private IItemService _itemService;
 

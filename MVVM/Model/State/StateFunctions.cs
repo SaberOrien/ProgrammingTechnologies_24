@@ -3,7 +3,7 @@ using Logic.Services_Abstract;
 
 namespace MVVM.Model
 {
-    public class StateFunctions
+    public class StateFunctions : IStateFunctions
     {
         private IStateService _stateService;
         public StateFunctions(IStateService? stateService = null)

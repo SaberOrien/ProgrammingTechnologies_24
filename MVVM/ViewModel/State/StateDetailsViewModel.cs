@@ -7,7 +7,7 @@ namespace MVVM.ViewModel
     public class StateDetailsViewModel : IViewModel
     {
         public ICommand UpdateState {  get; set; }
-        private readonly StateFunctions _functions;
+        private readonly IStateFunctions _functions;
         private int _id; 
         public int Id
         {
@@ -41,13 +41,13 @@ namespace MVVM.ViewModel
             }
         }
 
-        public StateDetailsViewModel(StateFunctions? stateFunctions = null)
+        public StateDetailsViewModel(IStateFunctions? stateFunctions = null)
         {
             this.UpdateState = new OnClickCommand(a => this.updateState(), c => this.canUpdateState());
             this._functions = stateFunctions ?? new StateFunctions(null);
         }
 
-        public StateDetailsViewModel(int id, int itemId, int itemAmount, StateFunctions? functions = null)
+        public StateDetailsViewModel(int id, int itemId, int itemAmount, IStateFunctions? functions = null)
         {
             this.Id = id;
             this.ItemId = itemId;

@@ -3,7 +3,7 @@ using Logic.Services_Abstract;
 
 namespace MVVM.Model
 {
-    public class UserFunctions
+    public class UserFunctions : IUserFunctions
     {
         private IUserService _userService;
 

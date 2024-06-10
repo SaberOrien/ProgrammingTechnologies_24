@@ -8,7 +8,7 @@ namespace MVVM.ViewModel
     {
         public ICommand UpdateUser { get; set; }
 
-        private readonly UserFunctions _userFunctions;
+        private readonly IUserFunctions _userFunctions;
 
         private int _id;
         public int Id
@@ -65,13 +65,13 @@ namespace MVVM.ViewModel
             }
         }
 
-        public UserDetailsViewModel(UserFunctions? userFunctions = null)
+        public UserDetailsViewModel(IUserFunctions? userFunctions = null)
         {
             this.UpdateUser = new OnClickCommand(a => this.updateUser(), c => this.checkIfCanUpdate());
             this._userFunctions = userFunctions ?? new UserFunctions(null);//UserFunctions.CreateUserFunctions();
         }
 
-        public UserDetailsViewModel(int id, string name, string surname, string email, string userType, UserFunctions? userFunctions = null)
+        public UserDetailsViewModel(int id, string name, string surname, string email, string userType, IUserFunctions? userFunctions = null)
         {
             this.Id = id;
             this.Name = name;

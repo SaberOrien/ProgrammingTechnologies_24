@@ -15,7 +15,7 @@ namespace MVVM.ViewModel
         public ICommand SwitchToEvent { get; set; }
         public ICommand SwitchToState { get; set; }
 
-        private readonly ItemFunctions _itemFunctions;
+        private readonly IItemFunctions _itemFunctions;
         private ObservableCollection<ItemDetailsViewModel> _items;
         public ObservableCollection<ItemDetailsViewModel> Items
         {
@@ -106,7 +106,7 @@ namespace MVVM.ViewModel
             }
         }
 
-        public ItemViewModel(ItemFunctions? functions = null)
+        public ItemViewModel(IItemFunctions? functions = null)
         {
             this.SwitchToUser = new SwitchCurrentViewCommand("UserView");
             this.SwitchToState = new SwitchCurrentViewCommand("StateView");

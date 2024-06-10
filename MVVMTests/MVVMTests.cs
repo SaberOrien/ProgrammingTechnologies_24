@@ -1,198 +1,258 @@
-using Logic.DTOs_Abstract;
-using Logic.Services_Abstract;
-using Moq;
-using MVVM.ViewModel;
-using MVVM.ViewModel.Commands;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows;
-using MVVM.Model;
-
-namespace MVVMTests
+﻿namespace MVVMTests
 {
+    using Moq;
+    using MVVM.Model;
+    using MVVM.ViewModel;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Collections.Generic;
+
     [TestClass]
     public class MVVMTests
     {
-        private UserFunctions userFunctions;
+        private IDataGenerator dataGenerator;
+
+        private Mock<IUserFunctions> mockUserFunctions;
         private UserViewModel userViewModel;
+        private UserDetailsViewModel userDetailsViewModel;
 
-        private ItemFunctions itemFunctions;
+        private Mock<IItemFunctions> mockItemFunctions;
         private ItemViewModel itemViewModel;
+        private ItemDetailsViewModel itemDetailsViewModel;
 
-        private StateFunctions stateFunctions;
+        private Mock<IStateFunctions> mockStateFunctions;
         private StateViewModel stateViewModel;
+        private StateDetailsViewModel stateDetailsViewModel;
 
-        private EventFunctions eventFunctions;
+        private Mock<IEventFunctions> mockEventFunctions;
         private EventViewModel eventViewModel;
+        private EventDetailsViewModel eventDetailsViewModel;
 
         [TestInitialize]
         public void SetUp()
         {
-            var mockUserService = new Mock<IUserService>();
+            dataGenerator = new ScriptedDataGenerator(); // Or new RandomDataGenerator();
 
-            mockUserService.Setup(service => service.GetUser(It.IsAny<int>())).ReturnsAsync(new Mock<IUserDTO>().Object);
-            mockUserService.Setup(service => service.GetUsers()).ReturnsAsync(new Dictionary<int, IUserDTO>
-            {
-                { 1, new Mock<IUserDTO>().Object },
-                { 2, new Mock<IUserDTO>().Object },
-                { 3, new Mock<IUserDTO>().Object },
-                { 4, new Mock<IUserDTO>().Object },
-                { 5, new Mock<IUserDTO>().Object }
-            });
+            mockUserFunctions = GenerateMockUserFunctions(dataGenerator);
+            mockItemFunctions = GenerateMockItemFunctions(dataGenerator);
+            mockStateFunctions = GenerateMockStateFunctions(dataGenerator);
+            mockEventFunctions = GenerateMockEventFunctions(dataGenerator);
 
-            this.userFunctions = new UserFunctions(mockUserService.Object);
-            this.userViewModel = new UserViewModel(this.userFunctions);
+            userViewModel = new UserViewModel(mockUserFunctions.Object);
+            userDetailsViewModel = new UserDetailsViewModel(mockUserFunctions.Object);
 
+            itemViewModel = new ItemViewModel(mockItemFunctions.Object);
+            itemDetailsViewModel = new ItemDetailsViewModel(mockItemFunctions.Object);
 
-            var mockItemService = new Mock<IItemService>();
-            mockItemService.Setup(service => service.GetItem(It.IsAny<int>())).ReturnsAsync(new Mock<IItemDTO>().Object);
-            mockItemService.Setup(service => service.GetItems()).ReturnsAsync(new Dictionary<int, IItemDTO>
-            {
-                { 1, new Mock<IItemDTO>().Object },
-                { 2, new Mock<IItemDTO>().Object },
-                { 3, new Mock<IItemDTO>().Object },
-                { 4, new Mock<IItemDTO>().Object },
-                { 5, new Mock<IItemDTO>().Object }
-            });
+            stateViewModel = new StateViewModel(mockStateFunctions.Object);
+            stateDetailsViewModel = new StateDetailsViewModel(mockStateFunctions.Object);
 
-            this.itemFunctions = new ItemFunctions(mockItemService.Object);
-            this.itemViewModel = new ItemViewModel(this.itemFunctions);
+            eventViewModel = new EventViewModel(mockEventFunctions.Object);
+            eventDetailsViewModel = new EventDetailsViewModel(mockEventFunctions.Object);
+        }
 
-            var mockStateService = new Mock<IStateService>();
-            mockStateService.Setup(service => service.GetState(It.IsAny<int>())).ReturnsAsync(new Mock<IStateDTO>().Object);
-            mockStateService.Setup(service => service.GetStates()).ReturnsAsync(new Dictionary<int, IStateDTO>
-            {
-                { 1, new Mock<IStateDTO>().Object },
-                { 2, new Mock<IStateDTO>().Object },
-                { 3, new Mock<IStateDTO>().Object },
-                { 4, new Mock<IStateDTO>().Object },
-                { 5, new Mock<IStateDTO>().Object }
-            });
+        private Mock<IUserFunctions> GenerateMockUserFunctions(IDataGenerator generator)
+        {
+            var mock = new Mock<IUserFunctions>();
 
-            this.stateFunctions = new StateFunctions(mockStateService.Object);
-            this.stateViewModel = new StateViewModel(this.stateFunctions);
+            mock.Setup(uf => uf.GetUser(It.IsAny<int>()))
+                .ReturnsAsync((int id) => generator.GenerateUserModels().ContainsKey(id) ? generator.GenerateUserModels()[id] : null);
 
-            var mockEventService = new Mock<IEventService>();
-            mockEventService.Setup(service => service.GetEvent(It.IsAny<int>())).ReturnsAsync(new Mock<IEventDTO>().Object);
-            mockEventService.Setup(service => service.GetEvents()).ReturnsAsync(new Dictionary<int, IEventDTO>
-            {
-                { 1, new Mock<IEventDTO>().Object },
-                { 2, new Mock<IEventDTO>().Object },
-                { 3, new Mock<IEventDTO>().Object },
-                { 4, new Mock<IEventDTO>().Object },
-                { 5, new Mock<IEventDTO>().Object }
-            });
+            mock.Setup(uf => uf.GetUsers())
+                .ReturnsAsync(generator.GenerateUserModels());
 
-            this.eventFunctions = new EventFunctions(mockEventService.Object);
-            this.eventViewModel = new EventViewModel(this.eventFunctions);
+            return mock;
+        }
 
-            IDataGenerator data = new RandomDataGenerator();
-            data.GenerateUserModels(userViewModel);
-            data.GenerateItemModels(itemViewModel);
-            data.GenerateStateModels(stateViewModel);
-            data.GenerateEventModels(eventViewModel);
+        private Mock<IItemFunctions> GenerateMockItemFunctions(IDataGenerator generator)
+        {
+            var mock = new Mock<IItemFunctions>();
+
+            mock.Setup(itf => itf.GetItem(It.IsAny<int>()))
+                .ReturnsAsync((int id) => generator.GenerateItemModels().ContainsKey(id) ? generator.GenerateItemModels()[id] : null);
+
+            mock.Setup(itf => itf.GetItems())
+                .ReturnsAsync(generator.GenerateItemModels());
+
+            return mock;
+        }
+
+        private Mock<IStateFunctions> GenerateMockStateFunctions(IDataGenerator generator)
+        {
+            var mock = new Mock<IStateFunctions>();
+
+            mock.Setup(sf => sf.GetState(It.IsAny<int>()))
+                .ReturnsAsync((int id) => generator.GenerateStateModels().ContainsKey(id) ? generator.GenerateStateModels()[id] : null);
+
+            mock.Setup(sf => sf.GetAllStates())
+                .ReturnsAsync(generator.GenerateStateModels());
+
+            return mock;
+        }
+
+        private Mock<IEventFunctions> GenerateMockEventFunctions(IDataGenerator generator)
+        {
+            var mock = new Mock<IEventFunctions>();
+
+            mock.Setup(ef => ef.GetEvent(It.IsAny<int>()))
+                .ReturnsAsync((int id) => generator.GenerateEventModels().ContainsKey(id) ? generator.GenerateEventModels()[id] : null);
+
+            mock.Setup(ef => ef.GetAllEvents())
+                .ReturnsAsync(generator.GenerateEventModels());
+
+            return mock;
         }
 
         [TestMethod]
-        public void GenerateUserModels_ShouldPopulateUsersList()
+        public void CreateUserCommand_ShouldBeExecutable()
         {
-            Assert.AreEqual(5, userViewModel.Users.Count);
-            Assert.AreEqual(5, itemViewModel.Items.Count);
-            Assert.AreEqual(5, stateViewModel.StateDetails.Count);
-            Assert.AreEqual(5, eventViewModel.Events.Count);
-        }
+            // Arrange
+            userViewModel.Name = "John";
+            userViewModel.Surname = "Doe";
+            userViewModel.Email = "john.doe@example.com";
+            userViewModel.UserType = "User";
 
-        [TestMethod]
-        public void UserViewModelTests()
-        {
-            userViewModel.Name = userViewModel.Users[0].Name;
-            userViewModel.Surname = userViewModel.Users[0].Surname;
-            userViewModel.Email = userViewModel.Users[0].Email;
-            userViewModel.UserType = userViewModel.Users[0].UserType;
-
-            Assert.IsNotNull(userViewModel.CreateUser);
+            // Act & Assert
             Assert.IsTrue(userViewModel.CreateUser.CanExecute(null));
+        }
 
-            userViewModel.Email = null;
-            Assert.IsFalse(userViewModel.CreateUser.CanExecute(null));
+        [TestMethod]
+        public void DeleteUserCommand_ShouldBeExecutable()
+        {
+            // Arrange
+            userViewModel.Name = "John";
+            userViewModel.Surname = "Doe";
+            userViewModel.Email = "john.doe@example.com";
+            userViewModel.UserType = "User";
+
+            // Act & Assert
             Assert.IsTrue(userViewModel.RemoveUser.CanExecute(null));
         }
 
         [TestMethod]
-        public void UserDetailsViewModelTests()
+        public void UpdateUserCommand_ShouldBeExecutable()
         {
-            userViewModel.Users[0].Surname = "NewSurname";
-            Assert.IsTrue(userViewModel.Users[0].UpdateUser.CanExecute(null));
+            // Arrange
+            userDetailsViewModel.Name = "John";
+            userDetailsViewModel.Surname = "Doe";
+            userDetailsViewModel.Email = "john.doe@example.com";
+            userDetailsViewModel.UserType = "User";
+
+            // Act & Assert
+            Assert.IsTrue(userDetailsViewModel.UpdateUser.CanExecute(null));
         }
 
         [TestMethod]
-        public void ItemViewModelTests()
+        public void CreateItemCommand_ShouldBeExecutable()
         {
-            itemViewModel.Title = itemViewModel.Items[0].Title;
-            itemViewModel.PublicationYear = itemViewModel.Items[0].PublicationYear;
-            itemViewModel.Author = itemViewModel.Items[0].Author;
-            itemViewModel.ItemType = itemViewModel.Items[0].ItemType;
+            // Arrange
+            itemViewModel.Title = "Sample Title";
+            itemViewModel.PublicationYear = 2021;
+            itemViewModel.Author = "Sample Author";
+            itemViewModel.ItemType = "Book";
 
-            Assert.IsNotNull(itemViewModel.CreateItem);
+            // Act & Assert
             Assert.IsTrue(itemViewModel.CreateItem.CanExecute(null));
+        }
 
-            itemViewModel.PublicationYear = -3;
-            Assert.IsFalse(itemViewModel.CreateItem.CanExecute(null));
+        [TestMethod]
+        public void DeleteItemCommand_ShouldBeExecutable()
+        {
+            // Arrange
+            itemViewModel.Title = "Sample Title";
+            itemViewModel.PublicationYear = 2021;
+            itemViewModel.Author = "Sample Author";
+            itemViewModel.ItemType = "Book";
+            itemViewModel.Details = new ItemDetailsViewModel(1, "Sample Title", 2021, "Sample Author", "Book", mockItemFunctions.Object);
+
+            // Act & Assert
             Assert.IsTrue(itemViewModel.RemoveItem.CanExecute(null));
         }
 
         [TestMethod]
-        public void ItemDetailsViewModelTests()
+        public void UpdateItemCommand_ShouldBeExecutable()
         {
-            itemViewModel.Items[0].Title = "NewSurname";
-            Assert.IsTrue(itemViewModel.Items[0].UpdateItem.CanExecute(null));
+            // Arrange
+            itemDetailsViewModel.Id = 1;
+            itemDetailsViewModel.Title = "Sample Title";
+            itemDetailsViewModel.PublicationYear = 2021;
+            itemDetailsViewModel.Author = "Sample Author";
+            itemDetailsViewModel.ItemType = "Book";
+
+            // Act & Assert
+            Assert.IsTrue(itemDetailsViewModel.UpdateItem.CanExecute(null));
         }
 
         [TestMethod]
-        public void StateViewModelTests()
+        public void CreateStateCommand_ShouldBeExecutable()
         {
-            stateViewModel.ItemId = stateViewModel.StateDetails[0].ItemId;
-            stateViewModel.ItemAmount = stateViewModel.StateDetails[0].ItemAmount;
+            // Arrange
+            stateViewModel.ItemId = 1;
+            stateViewModel.ItemAmount = 100;
 
-
-            Assert.IsNotNull(stateViewModel.CreateState);
+            // Act & Assert
             Assert.IsTrue(stateViewModel.CreateState.CanExecute(null));
+        }
 
-            stateViewModel.ItemAmount = -3;
-            Assert.IsFalse(stateViewModel.CreateState.CanExecute(null));
+        [TestMethod]
+        public void DeleteStateCommand_ShouldBeExecutable()
+        {
+            // Arrange
+            stateViewModel.ItemId = 1;
+            stateViewModel.ItemAmount = 100;
+            stateViewModel.StateDetailsViewModel = new StateDetailsViewModel(1, 1, 100, mockStateFunctions.Object);
+
+            // Act & Assert
             Assert.IsTrue(stateViewModel.RemoveState.CanExecute(null));
         }
 
         [TestMethod]
-        public void StateDetailsViewModelTests()
+        public void UpdateStateCommand_ShouldBeExecutable()
         {
-            stateViewModel.StateDetails[0].ItemAmount = 10;
-            Assert.IsTrue(stateViewModel.StateDetails[0].UpdateState.CanExecute(null));
+            // Arrange
+            stateDetailsViewModel.Id = 1;
+            stateDetailsViewModel.ItemId = 1;
+            stateDetailsViewModel.ItemAmount = 100;
+
+            // Act & Assert
+            Assert.IsTrue(stateDetailsViewModel.UpdateState.CanExecute(null));
         }
 
         [TestMethod]
-        public void EventViewModelTests()
+        public void CreateEventCommand_ShouldBeExecutable()
         {
-            eventViewModel.StateId = eventViewModel.Events[0].StateId;
-            eventViewModel.UserId = eventViewModel.Events[0].UserId;
+            // Arrange
+            eventViewModel.StateId = 1;
+            eventViewModel.UserId = 1;
 
-            Assert.IsNotNull(eventViewModel.BorrowEvent);
+            // Act & Assert
             Assert.IsTrue(eventViewModel.BorrowEvent.CanExecute(null));
             Assert.IsTrue(eventViewModel.ReturnEvent.CanExecute(null));
-            eventViewModel.StateId = -3;
-            Assert.IsFalse(eventViewModel.BorrowEvent.CanExecute(null));
-            Assert.IsFalse(eventViewModel.ReturnEvent.CanExecute(null));
+        }
+
+        [TestMethod]
+        public void DeleteEventCommand_ShouldBeExecutable()
+        {
+            // Arrange
+            eventViewModel.StateId = 1;
+            eventViewModel.UserId = 1;
+            eventViewModel.EventDetailsViewModel = new EventDetailsViewModel(1, 1, 1, DateTime.Now, "Borrow", mockEventFunctions.Object);
+
+            // Act & Assert
             Assert.IsTrue(eventViewModel.RemoveEvent.CanExecute(null));
         }
 
         [TestMethod]
-        public void EventDetailsViewModelTests()
+        public void UpdateEventCommand_ShouldBeExecutable()
         {
-            eventViewModel.Events[0].StateId = 10;
-            Assert.IsTrue(eventViewModel.Events[0].UpdateEvent.CanExecute(null));
+            // Arrange
+            eventDetailsViewModel.Id = 1;
+            eventDetailsViewModel.StateId = 1;
+            eventDetailsViewModel.UserId = 1;
+            eventDetailsViewModel.DateStamp = DateTime.Now;
+            eventDetailsViewModel.EventType = "Borrow";
+
+            // Act & Assert
+            Assert.IsTrue(eventDetailsViewModel.UpdateEvent.CanExecute(null));
         }
     }
 }

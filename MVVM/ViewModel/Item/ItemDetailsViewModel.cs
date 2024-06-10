@@ -8,7 +8,7 @@ namespace MVVM.ViewModel
     {
         public ICommand UpdateItem { get; set; }
 
-        private readonly ItemFunctions _functions;
+        private readonly IItemFunctions _functions;
         private int _id;
         public int Id
         {
@@ -62,13 +62,13 @@ namespace MVVM.ViewModel
             }
         }
 
-        public ItemDetailsViewModel(ItemFunctions? functions = null)
+        public ItemDetailsViewModel(IItemFunctions? functions = null)
         {
             this.UpdateItem = new OnClickCommand(a => this.updateItem(), c => this.canUpdateItem());
             this._functions = functions ?? new ItemFunctions(null);//ItemFunctions.CraeteItemFunctions();
         }
 
-        public ItemDetailsViewModel(int id, string title, int publicationYear, string author, string itemType, ItemFunctions? functions = null)
+        public ItemDetailsViewModel(int id, string title, int publicationYear, string author, string itemType, IItemFunctions? functions = null)
         {
             this.Id = id;
             this.Title = title;

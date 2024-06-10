@@ -1,12 +1,13 @@
-﻿using MVVM.ViewModel;
+﻿using MVVM.Model;
+using MVVM.ViewModel;
 
 namespace MVVMTests
 {
     internal interface IDataGenerator
     {
-        void GenerateUserModels(UserViewModel userViewModel);
-        void GenerateItemModels(ItemViewModel itemViewModel);
-        void GenerateStateModels(StateViewModel stateViewModel);
-        void GenerateEventModels(EventViewModel eventViewModel);
+        Dictionary<int, UserModel> GenerateUserModels();
+        Dictionary<int, ItemModel> GenerateItemModels();
+        Dictionary<int, StateModel> GenerateStateModels();
+        Dictionary<int, EventModel> GenerateEventModels();
     }
 }

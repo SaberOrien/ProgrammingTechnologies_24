@@ -15,7 +15,7 @@ namespace MVVM.ViewModel
         public ICommand ReturnEvent { get; set; }
         public ICommand RemoveEvent { get; set; }
 
-        private readonly EventFunctions _eventFunctions;
+        private readonly IEventFunctions _eventFunctions;
         private ObservableCollection<EventDetailsViewModel> _events;
         public ObservableCollection<EventDetailsViewModel> Events
         {
@@ -80,7 +80,7 @@ namespace MVVM.ViewModel
             }
         }
 
-        public EventViewModel(EventFunctions? eventFunctions = null)
+        public EventViewModel(IEventFunctions? eventFunctions = null)
         {
             this.SwitchToUser = new SwitchCurrentViewCommand("UserView");
             this.SwitchToItem = new SwitchCurrentViewCommand("ItemView");
