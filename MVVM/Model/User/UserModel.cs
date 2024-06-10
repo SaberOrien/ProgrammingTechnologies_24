@@ -1,8 +1,6 @@
-﻿using MVVM.Model.Abstract;
-
-namespace MVVM.Model.Implemented
+﻿namespace MVVM.Model
 {
-    internal class UserModel : IUserModel
+    public class UserModel
     {
         public UserModel(int id, string name, string surname, string email, string userType)
         {

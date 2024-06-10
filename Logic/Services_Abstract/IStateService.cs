@@ -12,9 +12,9 @@ namespace Logic.Services_Abstract
         }
 
         Task<IStateDTO> GetState(int id);
+        Task<Dictionary<int, IStateDTO>> GetStates();
         Task AddState(int id, int itemId, int itemAmount);
         Task DeleteState(int id);
         Task UpdateState(int id, int itemId, int itemAmount);
-        Task<Dictionary<int, IStateDTO>> GetAllStates();
     }
 }

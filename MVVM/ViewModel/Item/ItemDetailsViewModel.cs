@@ -1,14 +1,14 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
 using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    class ItemDetailsViewModel : IViewModel, IItemDetailsViewModel
+    public class ItemDetailsViewModel : IViewModel
     {
         public ICommand UpdateItem { get; set; }
 
-        private readonly IItemFunctions _functions;
+        private readonly ItemFunctions _functions;
         private int _id;
         public int Id
         {
@@ -62,13 +62,13 @@ namespace MVVM.ViewModel
             }
         }
 
-        public ItemDetailsViewModel(IItemFunctions? functions = null)
+        public ItemDetailsViewModel(ItemFunctions? functions = null)
         {
             this.UpdateItem = new OnClickCommand(a => this.updateItem(), c => this.canUpdateItem());
-            this._functions = functions ?? IItemFunctions.CreateModelOperation();
+            this._functions = functions ?? new ItemFunctions(null);//ItemFunctions.CraeteItemFunctions();
         }
 
-        public ItemDetailsViewModel(int id, string title, int publicationYear, string author, string itemType, IItemFunctions? functions = null)
+        public ItemDetailsViewModel(int id, string title, int publicationYear, string author, string itemType, ItemFunctions? functions = null)
         {
             this.Id = id;
             this.Title = title;
@@ -77,7 +77,7 @@ namespace MVVM.ViewModel
             this.ItemType = itemType;
 
             this.UpdateItem = new OnClickCommand(a => this.updateItem(), c => this.canUpdateItem());
-            this._functions = functions ?? IItemFunctions.CreateModelOperation();
+            this._functions = functions ?? new ItemFunctions(null);//ItemFunctionsns.CraeteItemFunctions();
         }
 
         private void updateItem()

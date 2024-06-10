@@ -1,10 +1,9 @@
 ﻿using Logic.Services_Abstract;
 using Logic.DTOs_Abstract;
-using MVVM.Model.Abstract;
 
-namespace MVVM.Model.Implemented
+namespace MVVM.Model
 {
-    internal class EventFunctions : IEventFunctions
+    public class EventFunctions
     {
         private IEventService _eventService;
         public EventFunctions(IEventService eventService)
@@ -12,12 +11,12 @@ namespace MVVM.Model.Implemented
             this._eventService = eventService ?? IEventService.CreateEventService();
         }
 
-        private IEventModel toEventModel(IEventDTO eventDTO)
+        private EventModel toEventModel(IEventDTO eventDTO)
         {
             return new EventModel(eventDTO.Id, eventDTO.StateId, eventDTO.UserId, eventDTO.DateStamp, eventDTO.EventType);
         }
 
-        public async Task<IEventModel> GetEvent(int id)
+        public async Task<EventModel> GetEvent(int id)
         {
             return this.toEventModel(await this._eventService.GetEvent(id));
         } 
@@ -33,10 +32,10 @@ namespace MVVM.Model.Implemented
         {
             await this._eventService.UpdateEvent(id, stateId, userId, dateStamp, type);
         }
-        public async Task<Dictionary<int, IEventModel>> GetAllEvents()
+        public async Task<Dictionary<int, EventModel>> GetAllEvents()
         {
-            Dictionary<int, IEventModel> events = new Dictionary<int, IEventModel>();
-            foreach (IEventDTO eventDTO in (await this._eventService.GetAllEvents()).Values)
+            Dictionary<int, EventModel> events = new Dictionary<int, EventModel>();
+            foreach (IEventDTO eventDTO in (await this._eventService.GetEvents()).Values)
             {
                 events.Add(eventDTO.Id, toEventModel(eventDTO));
             }

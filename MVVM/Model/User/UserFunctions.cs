@@ -1,15 +1,9 @@
 ﻿using Logic.DTOs_Abstract;
 using Logic.Services_Abstract;
-using MVVM.Model.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MVVM.Model.Implemented
+namespace MVVM.Model
 {
-    internal class UserFunctions : IUserFunctions
+    public class UserFunctions
     {
         private IUserService _userService;
 
@@ -18,14 +12,23 @@ namespace MVVM.Model.Implemented
             _userService = userService ?? IUserService.CreateUserService();
         }
 
-        private IUserModel toUserModel(IUserDTO userDTO)
+        private UserModel ToUserModel(IUserDTO userDTO)
         {
             return new UserModel(userDTO.Id, userDTO.Name, userDTO.Surname, userDTO.Email, userDTO.UserType);
         }
 
-        public async Task<IUserModel> GetUser(int id)
+        public async Task<UserModel> GetUser(int id)
         {
-            return this.toUserModel(await this._userService.GetUser(id));
+            return this.ToUserModel(await this._userService.GetUser(id));
+        }
+        public async Task<Dictionary<int, UserModel>> GetUsers()
+        {
+            Dictionary<int, UserModel> users = new Dictionary<int, UserModel>();
+            foreach (IUserDTO user in (await this._userService.GetUsers()).Values)
+            {
+                users.Add(user.Id, this.ToUserModel(user));
+            }
+            return users;
         }
         public async Task AddUser(int id, string name, string surname, string email, string userType)
         {
@@ -38,14 +41,6 @@ namespace MVVM.Model.Implemented
         public async Task UpdateUser(int id, string name, string surname, string email, string userType)
         {
             await this._userService.UpdateUser(id, name, surname, email, userType);
-        }
-        public async Task<Dictionary<int, IUserModel>> GetAllUsers()
-        {
-            Dictionary<int, IUserModel> users = new Dictionary<int, IUserModel>();
-            foreach(IUserDTO user in (await this._userService.GetAllUsers()).Values){
-                users.Add(user.Id, this.toUserModel(user));
-            }
-            return users;
         }
     }
 }

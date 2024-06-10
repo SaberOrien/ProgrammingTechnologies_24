@@ -1,4 +1,4 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    class ItemViewModel : IViewModel, IItemViewModel
+    public class ItemViewModel : IViewModel
     {
         public ICommand CreateItem {  get; set; }
         public ICommand RemoveItem { get; set;}
@@ -15,9 +15,9 @@ namespace MVVM.ViewModel
         public ICommand SwitchToEvent { get; set; }
         public ICommand SwitchToState { get; set; }
 
-        private readonly IItemFunctions _itemFunctions;
-        private ObservableCollection<IItemDetailsViewModel> _items;
-        public ObservableCollection<IItemDetailsViewModel> Items
+        private readonly ItemFunctions _itemFunctions;
+        private ObservableCollection<ItemDetailsViewModel> _items;
+        public ObservableCollection<ItemDetailsViewModel> Items
         {
             get => _items;
             set
@@ -94,8 +94,8 @@ namespace MVVM.ViewModel
             }
         }
 
-        private IItemDetailsViewModel _details;
-        public IItemDetailsViewModel Details
+        private ItemDetailsViewModel _details;
+        public ItemDetailsViewModel Details
         {
             get => _details;
             set
@@ -106,15 +106,16 @@ namespace MVVM.ViewModel
             }
         }
 
-        public ItemViewModel(IItemFunctions? functions = null)
+        public ItemViewModel(ItemFunctions? functions = null)
         {
             this.SwitchToUser = new SwitchCurrentViewCommand("UserView");
             this.SwitchToState = new SwitchCurrentViewCommand("StateView");
+            this.SwitchToEvent = new SwitchCurrentViewCommand("EventView");
             this.CreateItem = new OnClickCommand(a => this.GetItem(), c => this.CanGetItem());
             this.RemoveItem = new OnClickCommand(a => this.DeleteItem());
 
-            this.Items = new ObservableCollection<IItemDetailsViewModel>();
-            this._itemFunctions = functions ?? IItemFunctions.CreateModelOperation();
+            this.Items = new ObservableCollection<ItemDetailsViewModel>();
+            this._itemFunctions = functions ?? new ItemFunctions(null);//IItemFunctions.CraeteItemFunctions();
 
             this.IsSelected = false;
 
@@ -123,11 +124,11 @@ namespace MVVM.ViewModel
 
         private async void LoadItems()
         {
-            Dictionary<int, IItemModel> Items = await this._itemFunctions.GetAllItems();
+            Dictionary<int, ItemModel> Items = await this._itemFunctions.GetItems();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 this._items.Clear();
-                foreach(IItemModel item in Items.Values)
+                foreach(ItemModel item in Items.Values)
                 {
                     this._items.Add(new ItemDetailsViewModel(item.Id, item.Title, item.PublicationYear, item.Author, item.ItemType));
                 }
@@ -139,7 +140,7 @@ namespace MVVM.ViewModel
         {
             Task.Run(async () =>
             {
-                var items = await this._itemFunctions.GetAllItems();
+                var items = await this._itemFunctions.GetItems();
                 int currentId = items.Count + 1;
                 await this._itemFunctions.AddItem(currentId, this.Title, this.PublicationYear, this.Author, this.ItemType.ToString());
                 this.LoadItems();

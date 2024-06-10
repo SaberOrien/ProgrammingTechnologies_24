@@ -1,13 +1,6 @@
-﻿using MVVM.Model.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MVVM.Model.Implemented
+﻿namespace MVVM.Model
 {
-    internal class EventModel : IEventModel
+    public class EventModel
     {
         public EventModel(int id, int stateId, int userId, DateTime dateStamp, string eventType)
         {

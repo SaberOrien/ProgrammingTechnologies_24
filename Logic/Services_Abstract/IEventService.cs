@@ -11,9 +11,9 @@ namespace Logic.Services_Abstract
             return new EventService(dataRepository ?? IDataRepository.CreateDatabase());
         }
         Task<IEventDTO> GetEvent(int id);
+        Task<Dictionary<int, IEventDTO>> GetEvents();
         Task AddEvent(int id, int stateId, int userId, string type);
         Task DeleteEvent(int id);
         Task UpdateEvent(int id, int stateId, int userId, DateTime dateStamp, string type);
-        Task<Dictionary<int, IEventDTO>> GetAllEvents();
     }
 }

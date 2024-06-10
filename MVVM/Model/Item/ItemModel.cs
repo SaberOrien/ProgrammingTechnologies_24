@@ -1,8 +1,6 @@
-﻿using MVVM.Model.Abstract;
-
-namespace MVVM.Model.Implemented
+﻿namespace MVVM.Model
 {
-    internal class ItemModel : IItemModel
+    public class ItemModel
     {
         public ItemModel(int id, string title, int publicationYear, string author, string itemType)
         {

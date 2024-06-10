@@ -1,15 +1,14 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
-using System;
 using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    internal class UserDetailsViewModel : IViewModel, IUserDetailsViewModel
+    public class UserDetailsViewModel : IViewModel
     {
         public ICommand UpdateUser { get; set; }
 
-        private readonly IUserFunctions _userFunctions;
+        private readonly UserFunctions _userFunctions;
 
         private int _id;
         public int Id
@@ -66,13 +65,13 @@ namespace MVVM.ViewModel
             }
         }
 
-        public UserDetailsViewModel(IUserFunctions? userFunctions = null)
+        public UserDetailsViewModel(UserFunctions? userFunctions = null)
         {
             this.UpdateUser = new OnClickCommand(a => this.updateUser(), c => this.checkIfCanUpdate());
-            this._userFunctions = userFunctions ?? IUserFunctions.CreateModelOperation();
+            this._userFunctions = userFunctions ?? new UserFunctions(null);//UserFunctions.CreateUserFunctions();
         }
 
-        public UserDetailsViewModel(int id, string name, string surname, string email, string userType, IUserFunctions? userFunctions = null)
+        public UserDetailsViewModel(int id, string name, string surname, string email, string userType, UserFunctions? userFunctions = null)
         {
             this.Id = id;
             this.Name = name;
@@ -81,10 +80,10 @@ namespace MVVM.ViewModel
             this.UserType = userType;
 
             this.UpdateUser = new OnClickCommand(a => this.updateUser(), c => this.checkIfCanUpdate());
-            this._userFunctions = userFunctions ?? IUserFunctions.CreateModelOperation();
+            this._userFunctions = userFunctions ?? new UserFunctions(null);
         }
 
-        private void updateUser()
+        public void updateUser()
         {
             Task.Run(() =>
             {
@@ -92,7 +91,7 @@ namespace MVVM.ViewModel
             });
         }
 
-        private bool checkIfCanUpdate()
+        public bool checkIfCanUpdate()
         {
             return !(string.IsNullOrWhiteSpace(this.Name) || string.IsNullOrWhiteSpace(this.Surname) || string.IsNullOrWhiteSpace(this.Email) || string.IsNullOrWhiteSpace(this.UserType));
         }

@@ -11,9 +11,9 @@ namespace Logic.Services_Abstract
             return new UserService(dataRepository ?? IDataRepository.CreateDatabase());
         }
         Task<IUserDTO> GetUser(int id);
+        Task<Dictionary<int, IUserDTO>> GetUsers();
         Task AddUser(int id, string name, string surname, string email, string userType);
         Task DeleteUser(int id);
         Task UpdateUser(int id, string name, string surname, string email, string userType);
-        Task<Dictionary<int, IUserDTO>> GetAllUsers();
     }
 }

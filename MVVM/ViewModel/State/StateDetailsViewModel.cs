@@ -1,18 +1,13 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    internal class StateDetailsViewModel : IViewModel, IStateDetailsViewModel
+    public class StateDetailsViewModel : IViewModel
     {
         public ICommand UpdateState {  get; set; }
-        private readonly IStateFunctions _functions;
+        private readonly StateFunctions _functions;
         private int _id; 
         public int Id
         {
@@ -46,20 +41,20 @@ namespace MVVM.ViewModel
             }
         }
 
-        public StateDetailsViewModel(IStateFunctions? stateFunctions = null)
+        public StateDetailsViewModel(StateFunctions? stateFunctions = null)
         {
             this.UpdateState = new OnClickCommand(a => this.updateState(), c => this.canUpdateState());
-            this._functions = IStateFunctions.CreateStateService();
+            this._functions = stateFunctions ?? new StateFunctions(null);
         }
 
-        public StateDetailsViewModel(int id, int itemId, int itemAmount, IStateFunctions? functions = null)
+        public StateDetailsViewModel(int id, int itemId, int itemAmount, StateFunctions? functions = null)
         {
             this.Id = id;
             this.ItemId = itemId;
             this.ItemAmount = itemAmount;
 
             this.UpdateState = new OnClickCommand(a => this.updateState(), c => this.canUpdateState());
-            this._functions = IStateFunctions.CreateStateService();
+            this._functions = functions ?? new StateFunctions(null);
         }
 
         private void updateState()

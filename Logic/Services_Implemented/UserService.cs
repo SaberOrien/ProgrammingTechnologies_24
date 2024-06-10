@@ -22,7 +22,15 @@ namespace Logic.Services_Implemented
         {
             return this.ToUserDTO(await this._repository.GetUser(id));
         }
-
+        public async Task<Dictionary<int, IUserDTO>> GetUsers()
+        {
+            Dictionary<int, IUserDTO> users = new Dictionary<int, IUserDTO>();
+            foreach (IUser user in (await this._repository.GetUsers()).Values)
+            {
+                users.Add(user.Id, this.ToUserDTO(user));
+            }
+            return users;
+        }
         public async Task AddUser(int id, string name, string surname, string email, string userType)
         {
             await this._repository.AddUser(id, name, surname, email, userType);
@@ -34,15 +42,6 @@ namespace Logic.Services_Implemented
         public async Task UpdateUser(int id, string name, string surname, string email, string userType)
         {
             await this._repository.UpdateUser(id, name, surname, email, userType);
-        }
-        public async Task<Dictionary<int, IUserDTO>> GetAllUsers()
-        {
-            Dictionary<int, IUserDTO> users = new Dictionary<int, IUserDTO>();
-            foreach(IUser user in (await this._repository.GetAllUsers()).Values)
-            {
-                users.Add(user.Id, this.ToUserDTO(user));
-            }
-            return users;
         }
     }
 }

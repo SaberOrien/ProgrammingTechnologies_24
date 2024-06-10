@@ -1,17 +1,12 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    internal class EventViewModel : IViewModel, IEventViewModel
+    public class EventViewModel : IViewModel
     {
         public ICommand SwitchToUser { get; set; }
         public ICommand SwitchToItem { get; set; }
@@ -20,9 +15,9 @@ namespace MVVM.ViewModel
         public ICommand ReturnEvent { get; set; }
         public ICommand RemoveEvent { get; set; }
 
-        private readonly IEventFunctions _eventFunctions;
-        private ObservableCollection<IEventDetailsViewModel> _events;
-        public ObservableCollection<IEventDetailsViewModel> Events
+        private readonly EventFunctions _eventFunctions;
+        private ObservableCollection<EventDetailsViewModel> _events;
+        public ObservableCollection<EventDetailsViewModel> Events
         {
             get => _events;
             set
@@ -73,8 +68,8 @@ namespace MVVM.ViewModel
                 OnPropertyChanged(nameof(EventDetailsVisible));
             }
         }
-        private IEventDetailsViewModel _eventDetailsViewModel;
-        public IEventDetailsViewModel EventDetailsViewModel
+        private EventDetailsViewModel _eventDetailsViewModel;
+        public EventDetailsViewModel EventDetailsViewModel
         {
             get => _eventDetailsViewModel;
             set
@@ -85,7 +80,7 @@ namespace MVVM.ViewModel
             }
         }
 
-        public EventViewModel(IEventFunctions? eventFunctions = null)
+        public EventViewModel(EventFunctions? eventFunctions = null)
         {
             this.SwitchToUser = new SwitchCurrentViewCommand("UserView");
             this.SwitchToItem = new SwitchCurrentViewCommand("ItemView");
@@ -95,8 +90,8 @@ namespace MVVM.ViewModel
             this.ReturnEvent = new OnClickCommand(a => this.GetReturnEvent(), c => CanGetEvent());
             this.RemoveEvent = new OnClickCommand(a => this.DeleteEvent());
 
-            this.Events = new ObservableCollection<IEventDetailsViewModel>();
-            this._eventFunctions = eventFunctions ?? IEventFunctions.CreateEventFunctions();
+            this.Events = new ObservableCollection<EventDetailsViewModel>();
+            this._eventFunctions = eventFunctions ?? new EventFunctions(null);//IEventFunctions.CreateEventFunctions();
 
             this.EventSelected = false;
             Task.Run(this.LoadEvents);
@@ -104,12 +99,12 @@ namespace MVVM.ViewModel
 
         private async void LoadEvents()
         {
-            Dictionary<int, IEventModel> Events = await this._eventFunctions.GetAllEvents();
+            Dictionary<int, EventModel> Events = await this._eventFunctions.GetAllEvents();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 this._events.Clear();
 
-                foreach(IEventModel @event in Events.Values)
+                foreach(EventModel @event in Events.Values)
                 {
                     this._events.Add(new EventDetailsViewModel(@event.Id, @event.StateId, @event.UserId, @event.DateStamp, @event.EventType));
                 }

@@ -13,10 +13,9 @@ namespace Logic.Services_Abstract
         }
 
         Task<IItemDTO> GetItem(int id);
+        Task<Dictionary<int, IItemDTO>> GetItems();
         Task AddItem(int id, string title, int publicationYear, string author, string itemType);
         Task DeleteItem(int id);
         Task UpdateItem(int id, string title, int publicationYear, string author, string itemType);
-        Task<Dictionary<int, IItemDTO>> GetItems();
-
     }
 }

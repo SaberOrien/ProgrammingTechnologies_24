@@ -9,14 +9,9 @@ namespace Data.ImplementedInterfaces
 
         public DataContext(string? connectionString = null)
         {
-            if(connectionString is null)
+            if (connectionString is null)
             {
-                string _projectRootDir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
-                string _DBRelativePath = @"Library\Database\Library.mdf";
-                string _DBPath = Path.Combine(_projectRootDir, _DBRelativePath);
-                Console.WriteLine(_DBRelativePath);
-                Console.WriteLine(_DBPath);
-                this.ConnectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={_DBPath};Integrated Security = True; Connect Timeout = 30;";
+                this.ConnectionString = $@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename={Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, @"Library\Database\Library.mdf")};Integrated Security = True; Connect Timeout = 30;";
             }
             else
             {
@@ -24,18 +19,25 @@ namespace Data.ImplementedInterfaces
             }
         }
 
-        #region User
         public async Task<IUser?> GetUser(int id)
         {
             using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
             {
                 Database.User? user = await Task.Run(() =>
                 {
-                    IQueryable<Database.User> query = from u in context.Users where u.Id == id select u;
+                    IQueryable<Database.User> query = context.Users.Where(u => u.Id == id);
                     return query.FirstOrDefault();
                 });
 
                 return user is not null ? new User(user.Id, user.Name, user.Surname, user.Email, user.UserType) : null;
+            }
+        }
+        public async Task<Dictionary<int, IUser>> GetUsers()
+        {
+            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
+            {
+                IQueryable<IUser> usersQuery = context.Users.Select(u => new User(u.Id, u.Name, u.Surname, u.Email, u.UserType) as IUser);
+                return await Task.Run(() => usersQuery.ToDictionary(k => k.Id));
             }
         }
         public async Task AddUser(IUser user)
@@ -59,14 +61,14 @@ namespace Data.ImplementedInterfaces
         {
             using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
             {
-                Database.User toDelete = (from u in context.Users where u.Id == id select u).FirstOrDefault()!;
+                Database.User toDelete = context.Users.Where(u => u.Id == id).FirstOrDefault()!;
                 context.Users.DeleteOnSubmit(toDelete);
                 await Task.Run(() => context.SubmitChanges());
             }
         }
         public async Task UpdateUser(IUser user)
         {
-            using(LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
+            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
             {
                 Database.User toUpdate = (from u in context.Users where u.Id == user.Id select u).FirstOrDefault()!;
                 toUpdate.Name = user.Name;
@@ -77,28 +79,27 @@ namespace Data.ImplementedInterfaces
                 await Task.Run(() => context.SubmitChanges());
             }
         }
-        public async Task<Dictionary<int, IUser>> GetAllUsers()
-        {
-            using(LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
-            {
-                IQueryable<IUser> usersQuery = from u in context.Users select new User(u.Id, u.Name, u.Surname, u.Email, u.UserType) as IUser;
-                return await Task.Run(() => usersQuery.ToDictionary(k => k.Id));
-            }
-        }
-        #endregion
 
-        #region Item
-        public async Task<IItem?>GetItem(int id)
+
+        public async Task<IItem?> GetItem(int id)
         {
-            using(LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
+            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
             {
                 Database.Item? item = await Task.Run(() =>
                 {
-                    IQueryable<Database.Item> query = from i in context.Items where i.Id == id select i;
+                    IQueryable<Database.Item> query = context.Items.Where(i => i.Id == id);
                     return query.FirstOrDefault();
                 });
 
                 return item is not null ? new Book(item.Id, item.Title, item.PublicationYear, item.Author, item.ItemType) : null;
+            }
+        }
+        public async Task<Dictionary<int, IItem>> GetItems()
+        {
+            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
+            {
+                IQueryable<IItem> itemQuery = context.Items.Select(i => new Book(i.Id, i.Title, i.PublicationYear, i.Author, i.ItemType) as IItem);
+                return await Task.Run(() => itemQuery.ToDictionary(k => k.Id));
             }
         }
         public async Task AddItem(IItem item)
@@ -138,29 +139,27 @@ namespace Data.ImplementedInterfaces
                 await Task.Run(() => context.SubmitChanges());
             }
         }
-        public async Task<Dictionary<int, IItem>> GetAllItems()
-        {
-            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
-            {
-                IQueryable<IItem> itemQuery = from i in context.Items select new Book(i.Id, i.Title, i.PublicationYear, i.Author, i.ItemType) as IItem;
 
-                return await Task.Run(() => itemQuery.ToDictionary(k => k.Id));
-            }
-        }
-        #endregion
 
-        #region State
         public async Task<IState?> GetState(int id)
         {
             using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
             {
                 Database.State? state = await Task.Run(() =>
                 {
-                    IQueryable<Database.State> query = from s in context.States where s.Id == id select s;
+                    IQueryable<Database.State> query = context.States.Where(s => s.Id == id);
                     return query.FirstOrDefault();
                 });
 
                 return state is not null ? new State(state.Id, state.ItemId, state.ItemAmount) : null;
+            }
+        }
+        public async Task<Dictionary<int, IState>> GetStates()
+        {
+            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
+            {
+                IQueryable<IState> stateQuery = context.States.Select(s => new State(s.Id, s.ItemId, s.ItemAmount) as IState);
+                return await Task.Run(() => stateQuery.ToDictionary(k => k.Id));
             }
         }
         public async Task AddState(IState state)
@@ -195,31 +194,30 @@ namespace Data.ImplementedInterfaces
                 Database.State toUpdate = (from s in context.States where s.Id == state.Id select s).FirstOrDefault()!;
                 toUpdate.ItemId = state.ItemId;
                 toUpdate.ItemAmount = state.ItemAmount;
-                await Task.Run(()=>context.SubmitChanges());
+                await Task.Run(() => context.SubmitChanges());
             }
         }
-        public async Task<Dictionary<int, IState>> GetAllStates()
-        {
-            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
-            {
-                IQueryable<IState> stateQuery = from s in context.States select new State(s.Id, s.ItemId, s.ItemAmount) as IState;
-                return await Task.Run(() => stateQuery.ToDictionary(k => k.Id));
-            }
-        }
-        #endregion
 
-        #region Event
+
         public async Task<IEvent?> GetEvent(int id)
         {
             using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
             {
                 Database.Event? @event = await Task.Run(() =>
                 {
-                    IQueryable<Database.Event> query = from e in context.Events where e.Id == id select e;
+                    IQueryable<Database.Event> query = context.Events.Where(e => e.Id == id);
                     return query.FirstOrDefault();
                 });
 
                 return @event is not null ? new Event(@event.Id, @event.StateId, @event.UserId, @event.DateStamp, @event.EventType) : null;
+            }
+        }
+        public async Task<Dictionary<int, IEvent>> GetEvents()
+        {
+            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
+            {
+                IQueryable<IEvent> eventQuery = context.Events.Select(e => new Event(e.Id, e.StateId, e.UserId, e.DateStamp, e.EventType));
+                return await Task.Run(() => eventQuery.ToDictionary(k => k.Id));
             }
         }
         public async Task AddEvent(IEvent @event)
@@ -258,20 +256,11 @@ namespace Data.ImplementedInterfaces
                 toUpdate.DateStamp = @event.DateStamp;
                 toUpdate.EventType = @event.EventType;
 
-                await Task.Run(()=>context.SubmitChanges());
+                await Task.Run(() => context.SubmitChanges());
             }
         }
-        public async Task<Dictionary<int, IEvent>> GetAllEvents()
-        {
-            using (LibraryDataContext context = new LibraryDataContext(this.ConnectionString))
-            {
-                IQueryable<IEvent> eventQuery = from e in context.Events select new Event(e.Id, e.StateId, e.UserId, e.DateStamp, e.EventType);
-                return await Task.Run(() => eventQuery.ToDictionary(k => k.Id));
-            }
-        }
-        #endregion
 
-        #region Utils
+
         public async Task<bool> CheckIfUserExists(int id)
         {
             return (await this.GetUser(id) != null);
@@ -288,7 +277,6 @@ namespace Data.ImplementedInterfaces
         {
             return (await this.GetEvent(id) != null);
         }
-        #endregion
     }
 
 }

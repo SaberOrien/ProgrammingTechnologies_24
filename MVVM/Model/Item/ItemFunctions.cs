@@ -1,27 +1,34 @@
-﻿using Data.AbstractInterfaces;
-using Logic.DTOs_Abstract;
+﻿using Logic.DTOs_Abstract;
 using Logic.Services_Abstract;
-using MVVM.Model.Abstract;
 
-namespace MVVM.Model.Implemented
+namespace MVVM.Model
 {
-    class ItemFunctions : IItemFunctions
+    public class ItemFunctions
     {
         private IItemService _itemService;
 
         public ItemFunctions(IItemService itemService)
         {
-            _itemService = itemService;
+            _itemService = itemService ?? IItemService.CreateItemService(); ;
         }
 
-        private IItemModel toItemModel(IItemDTO itemDTO)
+        private ItemModel ToItemModel(IItemDTO itemDTO)
         {
             return new ItemModel(itemDTO.Id, itemDTO.Title, itemDTO.PublicationYear, itemDTO.Author, itemDTO.ItemType);
         }
 
-        public async Task<IItemModel> GetItem(int id)
+        public async Task<ItemModel> GetItem(int id)
         {
-            return this.toItemModel(await this._itemService.GetItem(id));
+            return this.ToItemModel(await this._itemService.GetItem(id));
+        }
+        public async Task<Dictionary<int, ItemModel>> GetItems()
+        {
+            Dictionary<int, ItemModel> items = new Dictionary<int, ItemModel>();
+            foreach (IItemDTO item in (await this._itemService.GetItems()).Values)
+            {
+                items.Add(item.Id, this.ToItemModel(item));
+            }
+            return items;
         }
         public async Task AddItem(int id, string title, int publicationYear, string author, string itemType)
         {
@@ -35,15 +42,5 @@ namespace MVVM.Model.Implemented
         {
             await this._itemService.UpdateItem(id, title, publicationYear, author, itemType);
         }
-        public async Task<Dictionary<int, IItemModel>> GetAllItems()
-        {
-            Dictionary<int, IItemModel> items = new Dictionary<int, IItemModel>();
-            foreach (IItemDTO item in (await this._itemService.GetItems()).Values)
-            {
-                items.Add(item.Id, this.toItemModel(item));
-            }
-            return items;
-        }
-
     }
 }

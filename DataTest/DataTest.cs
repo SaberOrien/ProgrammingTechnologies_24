@@ -40,7 +40,7 @@ namespace DataTest
             Assert.AreEqual("orien@gmail.com", user.Email);
             Assert.AreEqual("Reader", user.UserType);
             #endregion
-            var users = await _dataRepository.GetAllUsers();
+            var users = await _dataRepository.GetUsers();
             Assert.IsTrue(users.Count > 0);
             await Assert.ThrowsExceptionAsync<Exception>(async () => await _dataRepository.GetUser(userId + 2));
             #region Update
@@ -76,7 +76,7 @@ namespace DataTest
             Assert.AreEqual("Annette Marie", book.Author);
             Assert.AreEqual("Book", book.ItemType);
 
-            var items = await _dataRepository.GetAllItems();
+            var items = await _dataRepository.GetItems();
             Assert.AreEqual(items.Count, 1);
 
             await Assert.ThrowsExceptionAsync<Exception>(async () => await _dataRepository.GetItem(2));
@@ -152,7 +152,7 @@ namespace DataTest
             Assert.AreEqual(stateId, @event.StateId);
             Assert.AreEqual(userId, @event.UserId);
 
-            var events = await _dataRepository.GetAllEvents();
+            var events = await _dataRepository.GetEvents();
             Assert.AreEqual(1, events.Count);
 
             state = await _dataRepository.GetState(stateId);
@@ -172,14 +172,14 @@ namespace DataTest
             Assert.AreEqual(returnEventId, returnEvent.Id);
             Assert.AreEqual(stateId, returnEvent.StateId);
             Assert.AreEqual(userId, returnEvent.UserId);
-            events = await _dataRepository.GetAllEvents();
+            events = await _dataRepository.GetEvents();
             Assert.AreEqual(2, events.Count);
             state = await _dataRepository.GetState(stateId);
             Assert.AreEqual(7, state.ItemAmount);
 
             await _dataRepository.DeleteEvent(eventId);
             await _dataRepository.DeleteEvent(returnEventId);
-            events = await _dataRepository.GetAllEvents();
+            events = await _dataRepository.GetEvents();
             Assert.AreEqual(0, events.Count);
             await _dataRepository.DeleteState(stateId);
             await _dataRepository.DeleteItem(itemId);

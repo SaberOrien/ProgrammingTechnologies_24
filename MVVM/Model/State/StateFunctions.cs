@@ -1,15 +1,9 @@
 ﻿using Logic.DTOs_Abstract;
 using Logic.Services_Abstract;
-using MVVM.Model.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MVVM.Model.Implemented
+namespace MVVM.Model
 {
-    internal class StateFunctions : IStateFunctions
+    public class StateFunctions
     {
         private IStateService _stateService;
         public StateFunctions(IStateService? stateService = null)
@@ -17,11 +11,11 @@ namespace MVVM.Model.Implemented
             _stateService = stateService ?? IStateService.CreateStateService();
         }
 
-        private IStateModel toStateModel(IStateDTO state)
+        private StateModel toStateModel(IStateDTO state)
         {
             return new StateModel(state.Id, state.ItemId, state.ItemAmount);
         }
-        public async Task<IStateModel> GetState(int id)
+        public async Task<StateModel> GetState(int id)
         {
             return this.toStateModel(await this._stateService.GetState(id));
         }
@@ -37,10 +31,10 @@ namespace MVVM.Model.Implemented
         {
             await this._stateService.UpdateState(id, itemId, itemAmount);
         }
-        public async Task<Dictionary<int, IStateModel>> GetAllStates()
+        public async Task<Dictionary<int, StateModel>> GetAllStates()
         {
-            Dictionary<int, IStateModel> states = new Dictionary<int, IStateModel>();
-            foreach (IStateDTO state in (await this._stateService.GetAllStates()).Values)
+            Dictionary<int, StateModel> states = new Dictionary<int, StateModel>();
+            foreach (IStateDTO state in (await this._stateService.GetStates()).Values)
             {
                 states.Add(state.Id, this.toStateModel(state));
             }

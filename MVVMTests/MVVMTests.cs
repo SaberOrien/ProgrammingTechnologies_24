@@ -1,7 +1,6 @@
 using Logic.DTOs_Abstract;
 using Logic.Services_Abstract;
 using Moq;
-using MVVM.Model.Abstract;
 using MVVM.ViewModel;
 using MVVM.ViewModel.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,23 +9,24 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
+using MVVM.Model;
 
 namespace MVVMTests
 {
     [TestClass]
     public class MVVMTests
     {
-        private IUserFunctions userFunctions;
-        private IUserViewModel userViewModel;
+        private UserFunctions userFunctions;
+        private UserViewModel userViewModel;
 
-        private IItemFunctions itemFunctions;
-        private IItemViewModel itemViewModel;
+        private ItemFunctions itemFunctions;
+        private ItemViewModel itemViewModel;
 
-        private IStateFunctions stateFunctions;
-        private IStateViewModel stateViewModel;
+        private StateFunctions stateFunctions;
+        private StateViewModel stateViewModel;
 
-        private IEventFunctions eventFunctions;
-        private IEventViewModel eventViewModel;
+        private EventFunctions eventFunctions;
+        private EventViewModel eventViewModel;
 
         [TestInitialize]
         public void SetUp()
@@ -34,7 +34,7 @@ namespace MVVMTests
             var mockUserService = new Mock<IUserService>();
 
             mockUserService.Setup(service => service.GetUser(It.IsAny<int>())).ReturnsAsync(new Mock<IUserDTO>().Object);
-            mockUserService.Setup(service => service.GetAllUsers()).ReturnsAsync(new Dictionary<int, IUserDTO>
+            mockUserService.Setup(service => service.GetUsers()).ReturnsAsync(new Dictionary<int, IUserDTO>
             {
                 { 1, new Mock<IUserDTO>().Object },
                 { 2, new Mock<IUserDTO>().Object },
@@ -43,8 +43,8 @@ namespace MVVMTests
                 { 5, new Mock<IUserDTO>().Object }
             });
 
-            this.userFunctions = IUserFunctions.CreateModelOperation(mockUserService.Object);
-            this.userViewModel = IUserViewModel.CreateViewModel(this.userFunctions);
+            this.userFunctions = new UserFunctions(mockUserService.Object);
+            this.userViewModel = new UserViewModel(this.userFunctions);
 
 
             var mockItemService = new Mock<IItemService>();
@@ -58,12 +58,12 @@ namespace MVVMTests
                 { 5, new Mock<IItemDTO>().Object }
             });
 
-            this.itemFunctions = IItemFunctions.CreateModelOperation(mockItemService.Object);
-            this.itemViewModel = IItemViewModel.CreateViewModel(this.itemFunctions);
+            this.itemFunctions = new ItemFunctions(mockItemService.Object);
+            this.itemViewModel = new ItemViewModel(this.itemFunctions);
 
             var mockStateService = new Mock<IStateService>();
             mockStateService.Setup(service => service.GetState(It.IsAny<int>())).ReturnsAsync(new Mock<IStateDTO>().Object);
-            mockStateService.Setup(service => service.GetAllStates()).ReturnsAsync(new Dictionary<int, IStateDTO>
+            mockStateService.Setup(service => service.GetStates()).ReturnsAsync(new Dictionary<int, IStateDTO>
             {
                 { 1, new Mock<IStateDTO>().Object },
                 { 2, new Mock<IStateDTO>().Object },
@@ -72,12 +72,12 @@ namespace MVVMTests
                 { 5, new Mock<IStateDTO>().Object }
             });
 
-            this.stateFunctions = IStateFunctions.CreateStateService(mockStateService.Object);
-            this.stateViewModel = IStateViewModel.CreateViewModel(this.stateFunctions);
+            this.stateFunctions = new StateFunctions(mockStateService.Object);
+            this.stateViewModel = new StateViewModel(this.stateFunctions);
 
             var mockEventService = new Mock<IEventService>();
             mockEventService.Setup(service => service.GetEvent(It.IsAny<int>())).ReturnsAsync(new Mock<IEventDTO>().Object);
-            mockEventService.Setup(service => service.GetAllEvents()).ReturnsAsync(new Dictionary<int, IEventDTO>
+            mockEventService.Setup(service => service.GetEvents()).ReturnsAsync(new Dictionary<int, IEventDTO>
             {
                 { 1, new Mock<IEventDTO>().Object },
                 { 2, new Mock<IEventDTO>().Object },
@@ -86,8 +86,8 @@ namespace MVVMTests
                 { 5, new Mock<IEventDTO>().Object }
             });
 
-            this.eventFunctions = IEventFunctions.CreateEventFunctions(mockEventService.Object);
-            this.eventViewModel = IEventViewModel.CreateViewModel(this.eventFunctions);
+            this.eventFunctions = new EventFunctions(mockEventService.Object);
+            this.eventViewModel = new EventViewModel(this.eventFunctions);
 
             IDataGenerator data = new RandomDataGenerator();
             data.GenerateUserModels(userViewModel);
@@ -169,7 +169,7 @@ namespace MVVMTests
         [TestMethod]
         public void StateDetailsViewModelTests()
         {
-            stateViewModel.StateDetails[0].ItemAmount = 10; 
+            stateViewModel.StateDetails[0].ItemAmount = 10;
             Assert.IsTrue(stateViewModel.StateDetails[0].UpdateState.CanExecute(null));
         }
 

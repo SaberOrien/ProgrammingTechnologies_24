@@ -1,17 +1,12 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    internal class StateViewModel : IViewModel, IStateViewModel
+    public class StateViewModel : IViewModel
     {
         public ICommand SwitchToUser { get; set; }
         public ICommand SwitchToEvent { get; set; }
@@ -20,9 +15,9 @@ namespace MVVM.ViewModel
         public ICommand CreateState {  get; set; }
         public ICommand RemoveState { get; set; }
 
-        private readonly IStateFunctions _stateFunctions;
-        private ObservableCollection<IStateDetailsViewModel> _stateDetails;
-        public ObservableCollection<IStateDetailsViewModel> StateDetails
+        private readonly StateFunctions _stateFunctions;
+        private ObservableCollection<StateDetailsViewModel> _stateDetails;
+        public ObservableCollection<StateDetailsViewModel> StateDetails
         {
             get => _stateDetails;
             set
@@ -88,8 +83,8 @@ namespace MVVM.ViewModel
             }
         }
 
-        private IStateDetailsViewModel _stateDetailsViewModel;
-        public IStateDetailsViewModel StateDetailsViewModel
+        private StateDetailsViewModel _stateDetailsViewModel;
+        public StateDetailsViewModel StateDetailsViewModel
         {
             get => _stateDetailsViewModel;
             set
@@ -100,17 +95,18 @@ namespace MVVM.ViewModel
             }
         }
     
-        public StateViewModel(IStateFunctions? stateFunctions = null)
+        public StateViewModel(StateFunctions? stateFunctions = null)
         {
             this.SwitchToUser = new SwitchCurrentViewCommand("UserView");
             this.SwitchToItem = new SwitchCurrentViewCommand("ItemView");
+            this.SwitchToEvent = new SwitchCurrentViewCommand("EventView");
 
             this.CreateState = new OnClickCommand(a => this.GetState(), c => this.CanGetState());
             this.RemoveState = new OnClickCommand(a => this.DeleteState());
 
-            this.StateDetails = new ObservableCollection<IStateDetailsViewModel>();
+            this.StateDetails = new ObservableCollection<StateDetailsViewModel>();
 
-            this._stateFunctions = stateFunctions ?? IStateFunctions.CreateStateService();
+            this._stateFunctions = stateFunctions ?? new StateFunctions(null);
             this.StateSelected = false;
 
             Task.Run(this.LoadStates);
@@ -118,7 +114,7 @@ namespace MVVM.ViewModel
 
         private async void LoadStates()
         {
-            Dictionary<int, IStateModel> States = await this._stateFunctions.GetAllStates();
+            Dictionary<int, StateModel> States = await this._stateFunctions.GetAllStates();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 this._stateDetails.Clear();

@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace MVVM
+namespace MVVM.View
 {
     /// <summary>
     /// Interaction logic for App.xaml

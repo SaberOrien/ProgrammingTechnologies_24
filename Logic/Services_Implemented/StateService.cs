@@ -15,14 +15,22 @@ namespace Logic.Services_Implemented
             _repository = repository;
         }
 
-        private IStateDTO toStateDTO(IState state)
+        private IStateDTO ToStateDTO(IState state)
         {
             return new StateDTO(state.Id, state.ItemId, state.ItemAmount);
         }
-
         public async Task<IStateDTO> GetState(int id)
         {
-            return this.toStateDTO(await this._repository.GetState(id));
+            return this.ToStateDTO(await this._repository.GetState(id));
+        }
+        public async Task<Dictionary<int, IStateDTO>> GetStates()
+        {
+            Dictionary<int, IStateDTO> states = new Dictionary<int, IStateDTO>();
+            foreach (IState state in (await this._repository.GetStates()).Values)
+            {
+                states.Add(state.Id, this.ToStateDTO(state));
+            }
+            return states;
         }
         public async Task AddState(int id, int itemId, int itemAmount)
         {
@@ -35,15 +43,6 @@ namespace Logic.Services_Implemented
         public async Task UpdateState(int id, int itemId, int itemAmount)
         {
             await this._repository.UpdateState(id, itemId, itemAmount);
-        }
-        public async Task<Dictionary<int, IStateDTO>> GetAllStates()
-        {
-            Dictionary<int, IStateDTO> states = new Dictionary<int, IStateDTO>();
-            foreach (IState state in (await this._repository.GetAllStates()).Values)
-            {
-                states.Add(state.Id, this.toStateDTO(state));
-            }
-            return states;
         }
     }
 }

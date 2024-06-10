@@ -1,18 +1,13 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    internal class UserViewModel : IViewModel, IUserViewModel
+    public class UserViewModel : IViewModel
     {
         public ICommand SwitchToEvent { get; set; }
         public ICommand SwitchToItem { get; set; }
@@ -21,10 +16,10 @@ namespace MVVM.ViewModel
         public ICommand RemoveUser { get; set; }
 
 
-        private readonly IUserFunctions userFunctions;
-        private ObservableCollection<IUserDetailsViewModel> _privUsers;
+        private readonly UserFunctions userFunctions;
+        private ObservableCollection<UserDetailsViewModel> _privUsers;
 
-        public ObservableCollection<IUserDetailsViewModel> Users
+        public ObservableCollection<UserDetailsViewModel> Users
         {
             get => _privUsers;
             set
@@ -34,7 +29,7 @@ namespace MVVM.ViewModel
             }
         }
 
-        public UserViewModel(IUserFunctions? userFunctions = null)
+        public UserViewModel(UserFunctions? userFunctions = null)
         {
             this.SwitchToItem = new SwitchCurrentViewCommand("ItemView");
             this.SwitchToState = new SwitchCurrentViewCommand("StateView");
@@ -42,37 +37,37 @@ namespace MVVM.ViewModel
             this.CreateUser = new OnClickCommand(a => this.GetUser(), c => this.CanGetUser());
             this.RemoveUser = new OnClickCommand(a => this.DeleteUser());
 
-            this.Users = new ObservableCollection<IUserDetailsViewModel>();
+            this.Users = new ObservableCollection<UserDetailsViewModel>();
 
-            this.userFunctions = userFunctions ?? IUserFunctions.CreateModelOperation();
+            this.userFunctions = userFunctions ?? new UserFunctions(null);//IUserFunctions.CreateUserFunctions();
             this.IsSelected = false;
 
             Task.Run(this.LoadUsers);
         }
 
-        private void GetUser()
+        public void GetUser()
         {
             Task.Run(async () =>
             {
-                var tempUsers = await this.userFunctions.GetAllUsers();
+                var tempUsers = await this.userFunctions.GetUsers();
                 int userId = tempUsers.Count + 1;
                 await this.userFunctions.AddUser(userId, this.Name, this.Surname, this.Email, this.UserType.ToString());
                 this.LoadUsers();
             });
         }
 
-        private bool CanGetUser()
+        public bool CanGetUser()
         {
             return !(string.IsNullOrWhiteSpace(this.Name) || string.IsNullOrWhiteSpace(this.Surname) || string.IsNullOrWhiteSpace(this.Email) || this.UserType == null || string.IsNullOrWhiteSpace(this.UserType.ToString()));
         }
 
-        private async void LoadUsers()
+        public async void LoadUsers()
         {
-            Dictionary<int, IUserModel> users = await this.userFunctions.GetAllUsers();
+            Dictionary<int, UserModel> users = await this.userFunctions.GetUsers();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 this._privUsers.Clear();
-                foreach (IUserModel user in users.Values)
+                foreach (UserModel user in users.Values)
                 {
                     this._privUsers.Add(new UserDetailsViewModel(user.Id, user.Name, user.Surname, user.Email, user.UserType));
                 }
@@ -80,7 +75,7 @@ namespace MVVM.ViewModel
             OnPropertyChanged(nameof(users));
         }
 
-        private void DeleteUser()
+        public void DeleteUser()
         {
             Task.Run(async () =>
             {
@@ -163,8 +158,8 @@ namespace MVVM.ViewModel
             }
         }
 
-        private IUserDetailsViewModel _selectedUserViewModel;
-        public IUserDetailsViewModel SelectedUserViewModel
+        private UserDetailsViewModel _selectedUserViewModel;
+        public UserDetailsViewModel SelectedUserViewModel
         {
             get => _selectedUserViewModel;
             set

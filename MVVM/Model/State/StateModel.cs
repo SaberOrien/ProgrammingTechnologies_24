@@ -1,8 +1,6 @@
-﻿using MVVM.Model.Abstract;
-
-namespace MVVM.Model.Implemented
+﻿namespace MVVM.Model
 {
-    internal class StateModel : IStateModel
+    public class StateModel
     {
         public StateModel(int id, int itemId, int itemAmount)
         {

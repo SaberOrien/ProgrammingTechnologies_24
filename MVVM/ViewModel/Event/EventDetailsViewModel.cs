@@ -1,18 +1,13 @@
-﻿using MVVM.Model.Abstract;
+﻿using MVVM.Model;
 using MVVM.ViewModel.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace MVVM.ViewModel
 {
-    internal class EventDetailsViewModel : IViewModel, IEventDetailsViewModel
+    public class EventDetailsViewModel : IViewModel
     {
         public ICommand UpdateEvent { get; set; }
-        private readonly IEventFunctions _eventFunctions;
+        private readonly EventFunctions _eventFunctions;
 
         private int _id;
         public int Id
@@ -65,16 +60,16 @@ namespace MVVM.ViewModel
             }
         }
     
-        public EventDetailsViewModel(IEventFunctions? eventFunctions = null)
+        public EventDetailsViewModel(EventFunctions? eventFunctions = null)
         {
             this.UpdateEvent = new OnClickCommand(a => this.updateEvent(), c => this.canUpdateEvent());
-            this._eventFunctions = eventFunctions ?? IEventFunctions.CreateEventFunctions();
+            this._eventFunctions = eventFunctions ?? new EventFunctions(null);// ?? IEventFunctions.CreateEventFunctions();
         }
         
-        public EventDetailsViewModel(int id, int stateId, int userId, DateTime dateStamp, string eventType, IEventFunctions? eventFunctions = null)
+        public EventDetailsViewModel(int id, int stateId, int userId, DateTime dateStamp, string eventType, EventFunctions? eventFunctions = null)
         {
             this.UpdateEvent = new OnClickCommand(a => this.updateEvent(), c => this.canUpdateEvent());
-            this._eventFunctions = eventFunctions ?? IEventFunctions.CreateEventFunctions();
+            this._eventFunctions = eventFunctions ?? new EventFunctions(null);// ?? IEventFunctions.CreateEventFunctions();
 
             Id = id;
             StateId = stateId;

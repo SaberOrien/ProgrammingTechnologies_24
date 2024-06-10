@@ -11,7 +11,6 @@ namespace Data.ImplementedInterfaces
             this._context = context;
         }
 
-        #region User
         public async Task<IUser> GetUser(int id)
         {
             IUser? user = await this._context.GetUser(id);
@@ -20,6 +19,10 @@ namespace Data.ImplementedInterfaces
                 throw new Exception("User doesn't exist");
             }
             return user;
+        }
+        public async Task<Dictionary<int, IUser>> GetUsers()
+        {
+            return await this._context.GetUsers();
         }
         public async Task AddUser(int id, string name, string surname, string email, string userType)
         {
@@ -43,13 +46,8 @@ namespace Data.ImplementedInterfaces
             }
             await this._context.UpdateUser(user);
         }
-        public async Task<Dictionary<int, IUser>> GetAllUsers()
-        {
-            return await this._context.GetAllUsers();
-        }
-        #endregion
 
-        #region Item
+
         public async Task<IItem> GetItem(int id)
         {
             IItem? item = await this._context.GetItem(id);
@@ -58,6 +56,10 @@ namespace Data.ImplementedInterfaces
                 throw new Exception("Item doesn't exist");
             }
             return item;
+        }
+        public async Task<Dictionary<int, IItem>> GetItems()
+        {
+            return await this._context.GetItems();
         }
         public async Task AddItem(int id, string title, int publicationYear, string author, string itemType)
         {
@@ -81,13 +83,8 @@ namespace Data.ImplementedInterfaces
             }
             await this._context.UpdateItem(item);
         }
-        public async Task<Dictionary<int, IItem>> GetAllItems()
-        {
-            return await this._context.GetAllItems();
-        }
-        #endregion
 
-        #region State
+
         public async Task<IState> GetState(int id)
         {
             IState? state = await this._context.GetState(id);
@@ -96,6 +93,10 @@ namespace Data.ImplementedInterfaces
                 throw new Exception("State doesn't exist");
             }
             return state;
+        }
+        public async Task<Dictionary<int, IState>> GetStates()
+        {
+            return await this._context.GetStates();
         }
         public async Task AddState(int id, int itemId, int itemAmount)
         {
@@ -139,13 +140,8 @@ namespace Data.ImplementedInterfaces
             }
             await this._context.UpdateState(state);
         }
-        public async Task<Dictionary<int, IState>> GetAllStates()
-        {
-            return await this._context.GetAllStates();
-        }
-        #endregion
 
-        #region Event
+
         public async Task<IEvent> GetEvent(int id)
         {
             IEvent? @event = await this._context.GetEvent(id);
@@ -154,6 +150,10 @@ namespace Data.ImplementedInterfaces
                 throw new Exception("Event doesn't exist");
             }
             return @event;
+        }
+        public async Task<Dictionary<int, IEvent>> GetEvents()
+        {
+            return await this._context.GetEvents();
         }
         public async Task AddEvent(int id, int stateId, int userId, string eventType)
         {
@@ -174,11 +174,10 @@ namespace Data.ImplementedInterfaces
                         throw new Exception("Item is not available for borrowing.");
                     }
                     await this.UpdateState(stateId, item.Id, state.ItemAmount);
-                    //await this.UpdateUser(userId, user.Name, user.Surname, user.Email, user.UserType);
                     break;
                 case "Return":
-                    Dictionary<int, IEvent> events = await _context.GetAllEvents();
-                    Dictionary<int, IState> states = await _context.GetAllStates();
+                    Dictionary<int, IEvent> events = await _context.GetEvents();
+                    Dictionary<int, IState> states = await _context.GetStates();
 
                     int borrowCount = 0;
 
@@ -201,7 +200,6 @@ namespace Data.ImplementedInterfaces
 
                     state.ItemAmount += 1;
                     await this.UpdateState(stateId, item.Id, state.ItemAmount);
-                    //await this.UpdateUser(userId, user.Name, user.Surname, user.Email, user.UserType);
                     break;
                 default:
                     throw new ArgumentException("Invalid event type", nameof(eventType));
@@ -227,32 +225,23 @@ namespace Data.ImplementedInterfaces
 
             await this._context.UpdateEvent(updateEvent);
         }
-        public async Task<Dictionary<int, IEvent>> GetAllEvents()
-        {
-            return await this._context.GetAllEvents();
-        }
-        #endregion
 
-        #region Utils
+
         public async Task<bool> CheckIfUserExists(int id)
         {
             return await this._context.CheckIfUserExists(id);
         }
-
         public async Task<bool> CheckIfItemExists(int id)
         {
             return await this._context.CheckIfItemExists(id);
         }
-
         public async Task<bool> CheckIfStateExists(int id)
         {
             return await this._context.CheckIfStateExists(id);
         }
-
         public async Task<bool> CheckIfEventExists(int id)
         {
             return await this._context.CheckIfEventExists(id);
         }
-        #endregion
     }
 }
